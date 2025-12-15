@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GLB Viewer - 3D Model</title>
+    <link rel="stylesheet" href="./src/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1>Model Viewer</h1>
+            <div class="nav-links">
+                <span id="userEmail"></span>
+                <button onclick="goHome()" class="btn btn-secondary">Home</button>
+                <button onclick="logout()" class="btn btn-secondary">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="viewer-container">
+        <aside class="sidebar">
+            <h3>Models</h3>
+            <div id="modelList" class="model-list">
+                <p>Loading...</p>
+            </div>
+        </aside>
+
+        <main class="viewer-main">
+            <div id="canvas-container"></div>
+            <div id="loadingIndicator" class="loading">Loading model...</div>
+            <div id="info-panel" class="info-panel" style="display: none;">
+                <h3 id="modelTitle"></h3>
+                <p id="modelDesc"></p>
+                <p id="modelInfo"></p>
+            </div>
+        </main>
+    </div>
+
+    <!-- Global functions (sync) -->
+    <script>
+        window.logout = function() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            localStorage.removeItem('role');
+            window.location.href = './index.html';
+        };
+
+        window.goHome = function() {
+            const role = localStorage.getItem('role');
+            if (role === 'admin') {
+                window.location.href = './admin.html';
+            } else {
+                window.location.href = './viewer.html';
+            }
+        };
+
+        window.selectModel = function(id) {
+            if (window._selectModelFn) {
+                window._selectModelFn(id);
+            }
+        };
+    </script>
+
+    <!-- Import viewer module -->
+    <script type="module" src="./src/viewer.js"></script>
+</body>
+</html>

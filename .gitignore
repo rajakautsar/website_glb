@@ -1,0 +1,67 @@
+# Go binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.so.*
+*.dylib
+*.test
+*.out
+*.app
+*.exe
+*.iso
+
+# Dependency directories
+vendor/
+
+# Go workspace file
+go.work
+
+# SQLite database
+*.db
+*.db-shm
+*.db-wal
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*.code-workspace
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Node
+node_modules/
+dist/
+npm-debug.log
+yarn-error.log
+package-lock.json
+yarn.lock
+
+# Frontend dist
+frontend/dist/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+logs/
+
+# Build output
+backend/glb-server
+backend/*.o
+
+# Uploads (but keep the directory)
+uploads/*
+!uploads/.gitkeep

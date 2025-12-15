@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Three.js</title>
+    <style>
+        body { margin: 0; }
+        #canvas { display: block; }
+    </style>
+</head>
+<body>
+    <div id="canvas"></div>
+    <script type="module">
+        import * as THREE from 'three';
+        import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+        import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+
+        // Setup scene
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x2a2a2a);
+
+        const camera = new THREE.PerspectiveCamera(
+            75,
+            window.innerWidth / window.innerHeight,
+            0.1,
+            10000
+        );
+        camera.position.set(0, 0, 10);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.shadowMap.enabled = true;
+        renderer.outputColorSpace = THREE.SRGBColorSpace;
+        
+        document.getElementById('canvas').appendChild(renderer.domElement);
+
+        // Lighting
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+        scene.add(ambientLight);
+
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 1.0);
+        directionalLight.position.set(10, 20, 10);
+        scene.add(directionalLight);
+
+        // Controls
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // Load model
+        const loader = new GLTFLoader();
+        loader.load(
+            'http://localhost:8080/uploads/1765165185_2024_ford_f-150_raptor_r.glb',
+            (gltf) => {
+                console.log('Model loaded:', gltf);
+                const model = gltf.scene;
+                scene.add(model);
+
+                // Auto-fit camera
+                const box = new THREE.Box3().setFromObject(model);
+                const center = box.getCenter(new THREE.Vector3());
+                const size = box.getSize(new THREE.Vector3());
+                
+                const maxDim = Math.max(size.x, size.y, size.z);
+                const fov = camera.fov * (Math.PI / 180);
+                let cameraZ = Math.abs(maxDim / 2 / Math.tan(fov / 2));
+                cameraZ *= 1.5;
+
+                camera.position.copy(center);
+                camera.position.z += cameraZ;
+                controls.target.copy(center);
+                controls.update();
+
+                console.log('Model positioned at:', camera.position);
+            },
+            (progress) => {
+                console.log('Progress:', (progress.loaded / progress.total * 100).toFixed(2) + '%');
+            },
+            (error) => {
+                console.error('Error loading model:', error);
+            }
+        );
+
+        // Handle resize
+        window.addEventListener('resize', () => {
+            const w = window.innerWidth;
+            const h = window.innerHeight;
+            camera.aspect = w / h;
+            camera.updateProjectionMatrix();
+            renderer.setSize(w, h);
+        });
+    </script>
+</body>
+</html>
